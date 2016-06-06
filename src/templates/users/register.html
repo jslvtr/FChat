@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+    <h1>User Sign Up
+        <small>Once sign up, you can connect with your friends</small>
+    </h1>
+</div>
+<div class="form-style">
+    <form method="post">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" class="form-control" name="username" id="username" placeholder="Username">
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+        </div>
+        <div class="form-group">
+            <label for="re-password">Re-Type your Password</label>
+            <input type="password" class="form-control" id="re-password" name="re-password" placeholder="Re-Type your Password">
+        </div>
+         <div class="form-group">
+            <label for="re-password">Email</label>
+            <input type="text" class="form-control" id="email" name="email" placeholder="Email">
+        </div>
+        <button type="submit" class="btn btn-default">Submit</button>
+    </form>
+</div>
+{% endblock %}

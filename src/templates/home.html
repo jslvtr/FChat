@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="jumbotron">
+    <h1>FChat, Chat with friends</h1>
+    <p>You can use our app to add friends ,share seeds with friends and connect with them</p>
+    <p>Just sign up, and get started by searching friends and connect with them. We'll do the rest!</p>
+    <p><a class="btn btn-primary btn-lg" href="{{ url_for('users.user_register') }}" role="button">Sign Up</a></p>
+</div>
+{% endblock %}

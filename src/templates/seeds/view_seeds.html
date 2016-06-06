@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+    <h1>View My Seeds</h1>
+</div>
+
+
+<div class="list-group">
+    {% for seed in seeds %}
+        <a href="{{ url_for('seeds.view_seeds_detail', seed_id=seed._id) }}" class="list-group-item">
+            <h4 class="list-group-item-heading">
+                {{ seed.title }} <small>published at {{ seed.time.strftime('%d-%m-%Y at %H:%M') }}</small> <br/><small>for: {{ seed.private }}</small></h4>
+            <p class="list-group-item-text">{{ seed.content }}<br/>
+            <img src="{{ url_for('static', filename = 'uploads/'+session['username']+'/'+seed.image) }}" width="250px" height="130px"></p>
+        </a>
+    {% endfor %}
+</div>
+
+
+{% endblock %}

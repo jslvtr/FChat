@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+    <h1>{{ seed.title }}</h1>
+</div>
+<p><small>Last update time <strong>{{ seed.time.strftime('%d-%m-%Y at %H:%M')}}</strong></small></p>
+<p>{{ seed.content }}</p>
+<img src="{{ url_for('static', filename = 'uploads/'+session['username']+'/'+seed.image) }}" width="auto" height="auto">
+<div class="panel panel-default">
+    <div class="panel-body">
+        <a class="btn btn-warning" href="#" role="button">Update</a>
+        <a class="btn btn-danger" href="{{ url_for('seeds.delete_seed', seed_id=seed._id) }}" role="button">Delete</a>
+    </div>
+</div>
+
+{% endblock %}
