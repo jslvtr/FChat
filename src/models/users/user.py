@@ -6,10 +6,11 @@ import uuid
 
 class User:
 
-    def __init__(self, username, password, email, _id=None):
+    def __init__(self, username, password, email, image, _id=None):
         self.username = username
         self.password = password
         self.email = email
+        self.image = image
         self._id = uuid.uuid4().hex if _id is None else _id
 
 
@@ -18,7 +19,8 @@ class User:
             'username':self.username,
             'password':self.password,
             'email':self.email,
-            '_id':self._id
+            '_id':self._id,
+            'image':self.image
         }
 
 
@@ -35,14 +37,14 @@ class User:
         return True
 
     @staticmethod
-    def register_user(username, password, email):
+    def register_user(username, password, email, image):
         user_data = Database.find_one(UserConstant.COLLECTION, {'username':username})
         if user_data is not None:
             raise UserError.UserIsExist("The user is existing in the database")
         if not Utils.email_is_valid(email):
             raise UserError.EmailNotValid("Email is not valid")
         password = Utils.hash_password(password)
-        user = User(username, password, email)
+        user = User(username, password, email, image)
         user.save_to_mongo()
         return True
 

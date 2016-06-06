@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+    <h1>
+        Update My Profile
+    </h1>
+</div>
+<div class="form-style">
+    <form method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" class="form-control" name="username" id="username" value="{{ user.username }}">
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="text" class="form-control" id="email" name="email" value="{{ user.email }}">
+        </div>
+
+        <div class="form-group">
+            <label for="image">My Photo</label>
+            {% if user.image %}
+                <img src="{{ url_for('static', filename = 'uploads/'+user.image) }}" width="250px" height="130px">
+            {% endif %}
+            <input type="file" id="image" name="image"/>
+        </div>
+        <button type="submit" class="btn btn-default">Update</button>
+        <a href="{{ url_for('users.reset_password', username=session['username']) }}">reset password ?</a>
+    </form>
+</div>
+{% endblock %}

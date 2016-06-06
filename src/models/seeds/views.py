@@ -23,6 +23,7 @@ def add_seed():
         file = request.files['image']
         user = User.find_by_username(session['username'])
         user_id = user._id
+        filename = ""
 
         newpath = 'static/uploads/' + session['username']
         if not os.path.exists(newpath):
@@ -32,13 +33,13 @@ def add_seed():
             filename = secure_filename(file.filename)
 
             file.save(os.path.join(newpath, filename))
-            if request.form.get('private'):
-                _private = "private"
-            else:
-                _private = "public"
-            seed = Seed(title=title, content=content, private=_private, image=filename, user_id=user_id)
-            seed.save_to_mongo()
-            return redirect(url_for('.view_seeds'))
+        if request.form.get('private'):
+            _private = "private"
+        else:
+            _private = "public"
+        seed = Seed(title=title, content=content, private=_private, image=filename, user_id=user_id)
+        seed.save_to_mongo()
+        return redirect(url_for('.view_seeds'))
     return render_template('/seeds/add_seed.html')
 
 @seed_blueprint.route('/view')
@@ -53,11 +54,40 @@ def view_seeds_detail(seed_id):
     seed = Seed.find_by_id(seed_id)
     return render_template('/seeds/seed_detail.html', seed=seed)
 
-@seed_blueprint.route('/view/<string:seed_id>/delete')
+@seed_blueprint.route('/delete/<string:seed_id>')
 def delete_seed(seed_id):
     Seed.delete(seed_id)
     return redirect(url_for('.view_seeds'))
 
 @seed_blueprint.route('/update/<string:seed_id>', methods=['POST', 'GET'])
 def update_seed(seed_id):
-    pass
+    seed = Seed.find_by_id(seed_id)
+    if request.method == 'POST':
+        title = request.form['title']
+        content = request.form['content']
+        file = request.files['image']
+        user = User.find_by_username(session['username'])
+        user_id = user._id
+        filename = ""
+
+        newpath = 'static/uploads/' + session['username']
+        if not os.path.exists(newpath):
+            os.makedirs(newpath)
+
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+
+            file.save(os.path.join(newpath, filename))
+        if request.form.get('private'):
+            _private = "private"
+        else:
+            _private = "public"
+
+        seed.title = title
+        seed.content = content
+        seed.user_id = user_id
+        seed.image = filename
+        seed.private = _private
+        seed.save_to_mongo()
+        return redirect(url_for('.view_seeds'))
+    return render_template('/seeds/update_seed.html', seed=seed)
