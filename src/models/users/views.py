@@ -6,6 +6,7 @@ import os
 from werkzeug.utils import secure_filename
 
 
+
 user_blueprint = Blueprint('users', __name__)
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
@@ -18,6 +19,7 @@ def allowed_file(filename):
 def user_register():
     if request.method == 'POST':
         username = request.form['username']
+        username = username.lower()
         password = request.form['password']
         re_password = request.form['re-password']
         email = request.form['email']
@@ -114,5 +116,34 @@ def update_user(username):
         session['username']=username
         return redirect(url_for('home'))
     return render_template('/users/update_user.html', user=user)
+
+
+
+@user_blueprint.route('/search_friends', methods=['POST', 'GET'])
+def search_friends_result():
+    results = []
+    user = User.find_by_username(session['username'])
+    if request.method == 'POST':
+        search_term = request.form['search']
+        search_term = search_term.lower()
+        if search_term != '':
+            results = User.search_friend(search_term)
+
+    return render_template('/users/search_friends.html', results=results, user=user)
+
+@user_blueprint.route('/add_friend/<string:username>')
+def add_friend(username):
+    user = User.find_by_username(session['username'])
+    user.add_friends(username)
+    return redirect(url_for('.view_friends'))
+
+
+@user_blueprint.route('/view_friends')
+def view_friends():
+    results = []
+    friends = User.view_friends(session['username'])
+    for friends in friends:
+        results.append(User.find_by_username(friends.friend))
+    return render_template('/users/view_friends.html', results=results)
 
 

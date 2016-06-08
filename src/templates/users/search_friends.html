@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<form class="form-inline" method="post">
+    <div class="form-group search-form">
+
+        <span class="glyphicon glyphicon-search"></span> <input type="text" class="form-control" id="search"
+                                                                name="search" placeholder="Kent">
+
+    </div>
+    <button type="submit" class="btn btn-default search-button">Search</button>
+</form>
+{% if results %}
+    <div class="panel" id="search-group">
+        <div class="panel-body">
+
+            {% for results in results: %}
+                {% if session['username'] != results.username %}
+                    <div class="search-item">
+                        <h4>{{ results.username }}</h4>
+                        <p>Email: {{ results.email }}</p>
+
+                            {% if results.username not in user.friends %}
+                                <a href="{{ url_for('users.add_friend', username=results.username) }}" class="btn btn-success"
+                                       role="button">Add friend</a>
+                            {% else %}
+                                <a href="#" class="btn btn-warning"
+                                       role="button" disabled>This is your friend already</a>
+                            {% endif %}
+                    </div>
+                {% endif %}
+
+            {% endfor %}
+
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

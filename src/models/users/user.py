@@ -3,14 +3,16 @@ from src.common.utils import Utils
 import src.models.users.errors as UserError
 import src.models.users.constants as UserConstant
 import uuid
+from src.models.friends.friend import Friends
 
 class User:
 
-    def __init__(self, username, password, email, image, _id=None):
+    def __init__(self, username, password, email, image, friends=[], _id=None):
         self.username = username
         self.password = password
         self.email = email
         self.image = image
+        self.friends = friends
         self._id = uuid.uuid4().hex if _id is None else _id
 
 
@@ -20,6 +22,7 @@ class User:
             'password':self.password,
             'email':self.email,
             '_id':self._id,
+            'friends':self.friends,
             'image':self.image
         }
 
@@ -52,17 +55,21 @@ class User:
     def find_by_username(cls,username):
         return cls(** Database.find_one(UserConstant.COLLECTION, {'username':username}))
 
-    @staticmethod
-    def add_friends():
-        pass
+
+    def add_friends(self, friend_name):
+        friend = Friends(username=self.username, friend=friend_name)
+        user = self.find_by_username(self.username)
+        user.friends.append(friend_name)
+        friend.save_to_mongo()
+        user.save_to_mongo()
+
+    @classmethod
+    def search_friend(cls, search_term):
+        return [ cls(**elem) for elem in Database.find(UserConstant.COLLECTION, {'username':{"$regex":search_term}}) ]
 
     @staticmethod
-    def search_friend():
-        pass
-
-    @staticmethod
-    def view_friends():
-        pass
+    def view_friends(username):
+        return Friends.find_all_by_username(username)
 
     @staticmethod
     def edit_user():

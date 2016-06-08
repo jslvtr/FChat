@@ -16,3 +16,6 @@ class EmailNotValid(UserError):
 
 class RetypePassword(UserError):
     pass
+
+class DuplicateAddFriend(UserError):
+    pass

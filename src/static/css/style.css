@@ -7,3 +7,35 @@
     padding: 20px;
 
 }
+.search-form{
+    width:70%;
+    margin: 0 auto;
+}
+
+#search{
+    width:45%;
+}
+
+#place{
+    width:45%;
+}
+
+.engine{
+    padding:10px;
+}
+
+.search-button{
+    margin-right: 3%;
+    float: left;
+}
+
+.search-item{
+    border: 1px solid #f9f9f9;
+    background-color: #e9e9e9;
+    padding: 10px;
+    margin-bottom:1%;
+}
+
+#search-group{
+    margin-top:3%;
+}
