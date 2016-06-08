@@ -146,4 +146,20 @@ def view_friends():
         results.append(User.find_by_username(friends.friend))
     return render_template('/users/view_friends.html', results=results)
 
+@user_blueprint.route('/view_friends/<string:user_id>')
+def friends_detail(user_id):
+    user = User.find_by_id(user_id)
+    seeds = user.find_seeds_by_user()
+    return render_template('/users/users_detail.html', seeds=seeds, user=user)
+
+@user_blueprint.route('/delete/<string:username>')
+def delete_friend(username):
+    friend = User.find_by_username(username)
+    friend.delete(username)
+    user = User.find_by_username(session['username'])
+    user.friends.remove(username)
+    user.save_to_mongo()
+
+    return redirect(url_for('.view_friends'))
+
 

@@ -76,7 +76,6 @@ def update_seed(seed_id):
 
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-
             file.save(os.path.join(newpath, filename))
         if request.form.get('private'):
             _private = "private"
@@ -86,8 +85,9 @@ def update_seed(seed_id):
         seed.title = title
         seed.content = content
         seed.user_id = user_id
-        seed.image = filename
         seed.private = _private
+        if filename:
+            seed.image = filename
         seed.save_to_mongo()
         return redirect(url_for('.view_seeds'))
     return render_template('/seeds/update_seed.html', seed=seed)

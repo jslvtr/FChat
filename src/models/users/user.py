@@ -4,6 +4,7 @@ import src.models.users.errors as UserError
 import src.models.users.constants as UserConstant
 import uuid
 from src.models.friends.friend import Friends
+from src.models.seeds.seed import Seed
 
 class User:
 
@@ -52,6 +53,10 @@ class User:
         return True
 
     @classmethod
+    def find_by_id(cls, user_id):
+        return cls(**Database.find_one(UserConstant.COLLECTION, {'_id': user_id}))
+
+    @classmethod
     def find_by_username(cls,username):
         return cls(** Database.find_one(UserConstant.COLLECTION, {'username':username}))
 
@@ -71,9 +76,14 @@ class User:
     def view_friends(username):
         return Friends.find_all_by_username(username)
 
-    @staticmethod
-    def edit_user():
-        pass
+
+    def find_seeds_by_user(self):
+        return Seed.find_by_user(self._id)
+
+
+    def delete(self, friend_name):
+        Friends.delete(friend_name)
+
 
 
 
