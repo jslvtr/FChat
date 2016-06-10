@@ -4,6 +4,9 @@ import src.models.users.errors as UserError
 from src.common.utils import Utils
 import os
 from werkzeug.utils import secure_filename
+from src.models.seeds.seed import Seed
+import datetime
+from datetime import timedelta
 
 
 
@@ -162,4 +165,14 @@ def delete_friend(username):
 
     return redirect(url_for('.view_friends'))
 
+@user_blueprint.route('/activities')
+def show_activities():
+    friends = User.view_friends(session['username'])
+    if friends:
+        for friends in friends:
+            user = User.find_by_username(friends.friend)
+            seeds = Seed.find_by_user(user._id)
+
+            return render_template('/users/show_activities.html', seeds=seeds, user=user, standard=datetime.timedelta(0))
+    return render_template('/users/no_activities.html')
 

@@ -5,14 +5,17 @@ import src.models.users.constants as UserConstant
 import uuid
 from src.models.friends.friend import Friends
 from src.models.seeds.seed import Seed
+import datetime
+
 
 class User:
 
-    def __init__(self, username, password, email, image, friends=[], _id=None):
+    def __init__(self, username, password, email, image, friends=[], created_time=datetime.datetime.utcnow(), _id=None):
         self.username = username
         self.password = password
         self.email = email
         self.image = image
+        self.created_time = created_time
         self.friends = friends
         self._id = uuid.uuid4().hex if _id is None else _id
 
@@ -24,6 +27,7 @@ class User:
             'email':self.email,
             '_id':self._id,
             'friends':self.friends,
+            'created_time':self.created_time,
             'image':self.image
         }
 
@@ -83,6 +87,7 @@ class User:
 
     def delete(self, friend_name):
         Friends.delete(friend_name)
+
 
 
 
