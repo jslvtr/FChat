@@ -4,7 +4,7 @@
     <h1>Activities from your friends' circle</h1>
 </div>
 {% for seeds in seeds %}
-{% if seeds.time - user.created_time > standard: %}
+{% if seeds.time - user.created_time > standard and seeds.private == "public" : %}
 <div class="panel panel-default">
     <div class="panel-body">
         <h3>{{ seeds.title }}
