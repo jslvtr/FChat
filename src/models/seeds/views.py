@@ -29,6 +29,7 @@ def add_seed():
         if not os.path.exists(newpath):
             os.makedirs(newpath)
 
+
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
 
