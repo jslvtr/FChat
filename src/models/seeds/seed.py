@@ -39,3 +39,9 @@ class Seed:
     @staticmethod
     def delete(_id):
         Database.remove(SeedConstant.COLLECTION, {'_id':_id})
+
+    @classmethod
+    def find_updated_seeds(cls, user_id, seconds_since_updated=1):
+        last_updated_limit = datetime.datetime.utcnow() - datetime.timedelta(seconds=seconds_since_updated)
+        return [cls(**elem) for elem in Database.find(SeedConstant.COLLECTION, {"time": {"&lte": last_updated_limit},
+                                                                    "user_id": user_id, "private": "public"})]

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, url_for, session, request, redirect
+from flask import Blueprint, render_template, url_for, session, request, redirect, jsonify, json
 from src.models.users.user import User
 import src.models.users.errors as UserError
 from src.common.utils import Utils
@@ -176,3 +176,15 @@ def show_activities():
             return render_template('/users/show_activities.html', seeds=seeds, user=user, standard=datetime.timedelta(0))
     return render_template('/users/no_activities.html')
 
+@user_blueprint.route('/update_seeds')
+def update_seeds():
+
+    friends = User.view_friends(session['username'])
+    if friends:
+        for friends in friends:
+            users = User.find_by_username(friends.friend)
+            seed = Seed.find_updated_seeds(users._id)
+
+            return render_template('/users/show_activities.html', seed=seed, users=users)
+
+    return render_template('/users/no_activities.html')
