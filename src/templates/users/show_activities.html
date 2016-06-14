@@ -1,47 +1,50 @@
 {% extends 'base.html' %}
 {% block content %}
-<script type="text/javascript">
+    <script type="text/javascript">
 
-  setInterval(
-  function()
-  {
-    $.ajax({
-url: '/users/update_seeds',
-method: 'GET',
-success: function() {
-{% for seed in seed %}
-$("#result").prepend('<h3>{{ seed.title }}</h3>');
-{% endfor %}
-},
-error: function() {
+        window.setInterval(
+                function () {
+                    $.ajax({
+                        url: '/users/update_seeds',
+                        method: 'GET',
+                        success: function (result) {
+                            for(var i = 0; i < result.new_seeds.length; i++) {
+                                if ($("#" + result.new_seeds[i]._id).length == 0) {
+                                    $("#result").prepend('<h3 id="' + result.new_seeds[i]._id + '">' + result.new_seeds[i].title + '</h3>');
+                                }
+                            }
+                        },
+                        error: function () {
 // You can do something here, but it may not be necessary
-}
-});
-  },
-  1000);
-</script>
+                        }
+                    });
+                },
+                1000);
+    </script>
 
-<div class="page-header">
-    <h1>Activities from your friends' circle</h1>
-</div>
-<div id="result">
-{% for seeds in seeds %}
-{% if seeds.time - user.created_time > standard and seeds.private == "public" : %}
-
-    <div class="panel panel-default">
-        <div class="panel-body">
-            <h3>{{ seeds.title }}
-                <small>published at {{ seeds.time.strftime('%d-%m-%Y at %H:%M') }} from {{ user.username }}</small>
-            </h3>
-            <p>{{ seeds.content }}</p>
-            {% if seeds.image %}
-           <img src="{{ url_for('static', filename = 'uploads/'+user.username+'/'+seeds.image) }}" width="300px"
-                 height="195px">
-            {% endif %}
-        </div>
+    <div class="page-header">
+        <h1>Activities from your friends' circle</h1>
     </div>
+    <div id="result">
+        {% for seed in seeds %}
+            {% if seed.time - user.created_time > standard and seed.private == "public" %}
 
-{% endif %}
-{% endfor %}
-</div>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <h3>{{ seed.title }}
+                            <small>published at {{ seed.time.strftime('%d-%m-%Y at %H:%M') }}
+                                from {{ user.username }}</small>
+                        </h3>
+                        <p>{{ seed.content }}</p>
+                        {% if seed.image %}
+                            <img src="{{ url_for('static', filename = 'uploads/'+user.username+'/'+seed.image) }}"
+                                 width="300px"
+                                 height="195px">
+                        {% endif %}
+                    </div>
+                </div>
+
+            {% endif %}
+        {% endfor %}
+    </div>
 {% endblock %}

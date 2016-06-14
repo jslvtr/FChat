@@ -14,7 +14,7 @@ def init_db():
 
 @app.route('/')
 def home():
-    if session['username']:
+    if session.get('username'):
         return redirect(url_for('users.index'))
     return render_template('home.html')
 

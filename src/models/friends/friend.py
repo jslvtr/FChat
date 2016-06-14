@@ -23,7 +23,7 @@ class Friends:
 
     @classmethod
     def find_all_by_username(cls, username):
-        return [cls(**elem) for elem in Database.find(FriendConstant.COLLECTION, {'username':username})]
+        return [cls(**elem) for elem in Database.find(FriendConstant.COLLECTION, {'username': username})]
 
     @staticmethod
     def delete(friend):

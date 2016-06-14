@@ -31,9 +31,8 @@ class User:
             'image':self.image
         }
 
-
     def save_to_mongo(self):
-        Database.update(UserConstant.COLLECTION, {'_id':self._id}, self.json())
+        Database.update(UserConstant.COLLECTION, {'_id': self._id}, self.json())
 
     @staticmethod
     def is_valid_login(username, password):
@@ -64,7 +63,6 @@ class User:
     def find_by_username(cls,username):
         return cls(** Database.find_one(UserConstant.COLLECTION, {'username':username}))
 
-
     def add_friends(self, friend_name):
         friend = Friends(username=self.username, friend=friend_name)
         user = self.find_by_username(self.username)
@@ -74,20 +72,14 @@ class User:
 
     @classmethod
     def search_friend(cls, search_term):
-        return [ cls(**elem) for elem in Database.find(UserConstant.COLLECTION, {'username':{"$regex":search_term}}) ]
+        return [cls(**elem) for elem in Database.find(UserConstant.COLLECTION, {'username': {"$regex": search_term}})]
 
     @staticmethod
     def view_friends(username):
         return Friends.find_all_by_username(username)
 
-
     def find_seeds_by_user(self):
         return Seed.find_by_user(self._id)
 
-
     def delete(self, friend_name):
         Friends.delete(friend_name)
-
-
-
-

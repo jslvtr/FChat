@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-from flask import Blueprint, render_template, url_for, session, request, redirect, jsonify, json
-=======
 from flask import Blueprint, render_template, url_for, session, request, redirect, jsonify
->>>>>>> fa3311c75bf6402239df7034124c068f72f84a60
 from src.models.users.user import User
 import src.models.users.errors as UserError
 from src.common.utils import Utils
@@ -13,14 +9,15 @@ import datetime
 from datetime import timedelta
 
 
-
 user_blueprint = Blueprint('users', __name__)
 
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
 
 def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+    split = filename.rsplit(".")
+    return '.' in filename and split[len(split)-1] in ALLOWED_EXTENSIONS
+
 
 @user_blueprint.route('/register', methods=['POST', 'GET'])
 def user_register():
@@ -33,10 +30,7 @@ def user_register():
         file = request.files['image']
         filename = ""
 
-
         if password == re_password:
-
-
             newpath = 'static/uploads'
             if not os.path.exists(newpath):
                 os.makedirs(newpath)
@@ -50,12 +44,14 @@ def user_register():
                 return redirect(url_for('.index'))
         else:
             raise UserError.RetypePassword("Please confirm the two fields of password are the same")
-    return render_template('/users/register.html')
+    return render_template('users/register.html')
+
 
 @user_blueprint.route('/logout')
 def user_logout():
     session['username'] = None
     return redirect(url_for('home'))
+
 
 @user_blueprint.route('/login', methods=['POST', 'GET'])
 def user_login():
@@ -66,8 +62,7 @@ def user_login():
             session['username'] = username
             return redirect(url_for('.index'))
 
-    return render_template('/users/login.html')
-
+    return render_template('users/login.html')
 
 
 @user_blueprint.route('/reset-password/<string:username>', methods=['POST', 'GET'])
@@ -88,8 +83,7 @@ def reset_password(username):
         else:
             raise UserError.PasswordIncorrect("Your origin password is not correct")
 
-    return render_template('/users/reset_password.html')
-
+    return render_template('users/reset_password.html')
 
 
 @user_blueprint.route('/setting/<string:username>', methods=['POST', 'GET'])
@@ -100,7 +94,6 @@ def update_user(username):
         email = request.form['email']
         file = request.files['image']
         filename = ""
-
 
         newpath = 'static/uploads'
         if not os.path.exists(newpath):
@@ -118,8 +111,7 @@ def update_user(username):
         user.save_to_mongo()
         session['username']=username
         return redirect(url_for('.index'))
-    return render_template('/users/update_user.html', user=user)
-
+    return render_template('users/update_user.html', user=user)
 
 
 @user_blueprint.route('/search_friends', methods=['POST', 'GET'])
@@ -132,7 +124,8 @@ def search_friends_result():
         if search_term != '':
             results = User.search_friend(search_term)
 
-    return render_template('/users/search_friends.html', results=results, user=user)
+    return render_template('users/search_friends.html', results=results, user=user)
+
 
 @user_blueprint.route('/add_friend/<string:username>')
 def add_friend(username):
@@ -147,13 +140,15 @@ def view_friends():
     friends = User.view_friends(session['username'])
     for friends in friends:
         results.append(User.find_by_username(friends.friend))
-    return render_template('/users/view_friends.html', results=results)
+    return render_template('users/view_friends.html', results=results)
+
 
 @user_blueprint.route('/view_friends/<string:user_id>')
 def friends_detail(user_id):
     user = User.find_by_id(user_id)
     seeds = user.find_seeds_by_user()
-    return render_template('/users/users_detail.html', seeds=seeds, user=user)
+    return render_template('users/users_detail.html', seeds=seeds, user=user)
+
 
 @user_blueprint.route('/delete/<string:username>')
 def delete_friend(username):
@@ -165,6 +160,7 @@ def delete_friend(username):
 
     return redirect(url_for('.view_friends'))
 
+
 @user_blueprint.route('/')
 def index():
     friends = User.view_friends(session['username'])
@@ -173,18 +169,17 @@ def index():
             user = User.find_by_username(friends.friend)
             seeds = Seed.find_by_user(user._id)
 
-            return render_template('/users/show_activities.html', seeds=seeds, user=user, standard=datetime.timedelta(0))
-    return render_template('/users/no_activities.html')
+            return render_template('users/show_activities.html', seeds=seeds, user=user, standard=datetime.timedelta(0))
+    return render_template('users/no_activities.html')
+
 
 @user_blueprint.route('/update_seeds')
 def update_seeds():
-
     friends = User.view_friends(session['username'])
+    seeds = []
     if friends:
         for friends in friends:
-            users = User.find_by_username(friends.friend)
-            seed = Seed.find_updated_seeds(users._id)
+            user = User.find_by_username(friends.friend)
+            seeds = [s.json() for s in Seed.find_updated_seeds(user._id)]
 
-            return render_template('/users/show_activities.html', seed=seed, users=users)
-
-    return render_template('/users/no_activities.html')
+    return jsonify({'new_seeds': seeds})
