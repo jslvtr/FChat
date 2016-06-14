@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, session, redirect,url_for
 from src.common.database import Database
 
 UPLOAD_FOLDER = '/static/uploads'
@@ -14,6 +14,8 @@ def init_db():
 
 @app.route('/')
 def home():
+    if session['username']:
+        return redirect(url_for('users.index'))
     return render_template('home.html')
 
 

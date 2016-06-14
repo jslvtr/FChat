@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 from flask import Blueprint, render_template, url_for, session, request, redirect, jsonify, json
+=======
+from flask import Blueprint, render_template, url_for, session, request, redirect, jsonify
+>>>>>>> fa3311c75bf6402239df7034124c068f72f84a60
 from src.models.users.user import User
 import src.models.users.errors as UserError
 from src.common.utils import Utils
@@ -43,7 +47,7 @@ def user_register():
                 file.save(os.path.join(newpath, filename))
             if User.register_user(username, password, email, filename):
                 session['username'] = username
-                return redirect(url_for('home'))
+                return redirect(url_for('.index'))
         else:
             raise UserError.RetypePassword("Please confirm the two fields of password are the same")
     return render_template('/users/register.html')
@@ -60,14 +64,10 @@ def user_login():
         password = request.form['password']
         if User.is_valid_login(username, password):
             session['username'] = username
-            return redirect(url_for('home'))
+            return redirect(url_for('.index'))
 
     return render_template('/users/login.html')
 
-
-@user_blueprint.route('/')
-def index():
-    pass
 
 
 @user_blueprint.route('/reset-password/<string:username>', methods=['POST', 'GET'])
@@ -82,7 +82,7 @@ def reset_password(username):
             if new == re_password:
                 user.password = Utils.hash_password(new)
                 user.save_to_mongo()
-                return redirect(url_for('home'))
+                return redirect(url_for('.index'))
             else:
                 raise UserError.RetypePassword("Your new password and re-type password are not the same")
         else:
@@ -117,7 +117,7 @@ def update_user(username):
             user.image = filename
         user.save_to_mongo()
         session['username']=username
-        return redirect(url_for('home'))
+        return redirect(url_for('.index'))
     return render_template('/users/update_user.html', user=user)
 
 
@@ -165,8 +165,8 @@ def delete_friend(username):
 
     return redirect(url_for('.view_friends'))
 
-@user_blueprint.route('/activities')
-def show_activities():
+@user_blueprint.route('/')
+def index():
     friends = User.view_friends(session['username'])
     if friends:
         for friends in friends:
